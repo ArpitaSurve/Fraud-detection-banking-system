@@ -37,12 +37,4 @@ A full-stack system that detects suspicious banking transactions in real time us
 
 
 
-## 🔥 API Endpoints
-- POST /transactions  
-- GET /transactions  
-- GET /alerts  
 
----
-
-## 👩‍💻 Author
-Your Name
