@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fraud Detection Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Ambient background blobs -->
+    <div class="bg-blob blob1"></div>
+    <div class="bg-blob blob2"></div>
+    <div class="bg-blob blob3"></div>
+
+    <div class="container">
+
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <span class="logo-icon">⬡</span>
+                <div>
+                    <h1>FraudShield</h1>
+                    <p class="subtitle">Real-time Transaction Intelligence</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="status-pill">
+                    <span class="pulse-dot"></span>
+                    System Active
+                </div>
+                <div class="clock" id="clock"></div>
+            </div>
+        </header>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-label">Total Transactions</span>
+                <span class="stat-value" id="stat-total">—</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-label">Active Alerts</span>
+                <span class="stat-value danger" id="stat-alerts">—</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-label">High Risk</span>
+                <span class="stat-value warning" id="stat-high">—</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-label">Last Updated</span>
+                <span class="stat-value muted" id="stat-updated">—</span>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+
+            <!-- Left: Form Card -->
+            <div class="panel form-panel">
+                <div class="panel-header">
+                    <span class="panel-icon">➕</span>
+                    <h2>New Transaction</h2>
+                </div>
+
+                <div class="form-group">
+                    <label>Account ID</label>
+                    <input type="number" id="account_id" placeholder="e.g. 100423" />
+                </div>
+                <div class="form-group">
+                    <label>Amount (₹)</label>
+                    <input type="number" id="amount" placeholder="e.g. 25000" />
+                </div>
+                <div class="form-group">
+                    <label>Transaction Type</label>
+                    <select id="transaction_type">
+                        <option value="debit">Debit</option>
+                        <option value="credit">Credit</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" id="location" placeholder="e.g. Mumbai" />
+                </div>
+
+                <button class="btn btn-primary" onclick="addTransaction()">
+                    <span>Submit Transaction</span>
+                    <span class="btn-arrow">→</span>
+                </button>
+
+                <div id="form-feedback" class="form-feedback"></div>
+            </div>
+
+            <!-- Right: Action Buttons -->
+            <div class="panel actions-panel">
+                <div class="panel-header">
+                    <span class="panel-icon">⚡</span>
+                    <h2>Quick Actions</h2>
+                </div>
+                <button class="btn btn-outline" onclick="loadAlerts()">
+                    <span class="btn-icon">🚨</span> Load Fraud Alerts
+                </button>
+                <button class="btn btn-outline" onclick="loadTransactions()">
+                    <span class="btn-icon">💳</span> Load Transactions
+                </button>
+                <button class="btn btn-ghost" onclick="clearTables()">
+                    <span class="btn-icon">🗑</span> Clear View
+                </button>
+
+                <div class="legend">
+                    <p class="legend-title">Risk Levels</p>
+                    <div class="legend-item"><span class="badge high">HIGH</span> Immediate review required</div>
+                    <div class="legend-item"><span class="badge medium">MED</span> Flagged for monitoring</div>
+                    <div class="legend-item"><span class="badge low">LOW</span> Minor anomaly detected</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alerts Table -->
+        <div class="panel table-panel" id="alerts-panel">
+            <div class="panel-header">
+                <span class="panel-icon">🚨</span>
+                <h2>Fraud Alerts</h2>
+                <span class="badge-count" id="alert-count">0</span>
+            </div>
+            <div class="table-wrapper">
+                <table id="alertsTable">
+                    <thead>
+                        <tr>
+                            <th>Alert ID</th>
+                            <th>Reason</th>
+                            <th>Risk Level</th>
+                            <th>Amount</th>
+                            <th>Location</th>
+                        </tr>
+                    </thead>
+                    <tbody id="alertsBody">
+                        <tr class="empty-row">
+                            <td colspan="5">No alerts loaded. Click "Load Fraud Alerts".</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Transactions Table -->
+        <div class="panel table-panel" id="txn-panel">
+            <div class="panel-header">
+                <span class="panel-icon">💳</span>
+                <h2>Transaction Log</h2>
+                <span class="badge-count" id="txn-count">0</span>
+            </div>
+            <div class="table-wrapper">
+                <table id="transactionsTable">
+                    <thead>
+                        <tr>
+                            <th>Txn ID</th>
+                            <th>Account</th>
+                            <th>Amount</th>
+                            <th>Type</th>
+                            <th>Location</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsBody">
+                        <tr class="empty-row">
+                            <td colspan="5">No transactions loaded. Click "Load Transactions".</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div><!-- /container -->
+
+    <script src="script.js"></script>
+</body>
+
+</html>
