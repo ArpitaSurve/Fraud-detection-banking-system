@@ -46,7 +46,7 @@ function riskBadge(level) {
 function addTransaction() {
     const account_id = document.getElementById("account_id").value.trim();
     const amount = document.getElementById("amount").value.trim();
-    const transaction_type = document.getElementById("transaction_type").value;
+    const type = document.getElementById("transaction_type").value;
     const location = document.getElementById("location").value.trim();
 
     if (!account_id || !amount || !location) {
@@ -54,26 +54,29 @@ function addTransaction() {
         return;
     }
 
-    const data = { account_id, amount, transaction_type, location };
-
-    fetch(`${BASE_URL}/transactions`, {
+    fetch(`${BASE_URL}/add-transaction`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
+        body: JSON.stringify({
+            account_id,
+            amount,
+            type,
+            location
+        })
     })
-        .then(res => {
-            if (!res.ok) throw new Error(`Server error: ${res.status}`);
-            return res.json();
-        })
-        .then(() => {
-            showFeedback("✓ Transaction submitted successfully.", "success");
-            document.getElementById("account_id").value = "";
-            document.getElementById("amount").value = "";
-            document.getElementById("location").value = "";
-        })
-        .catch(err => {
-            showFeedback(`✗ Failed: ${err.message}`, "error");
-        });
+    .then(res => res.text())
+    .then(data => {
+        showFeedback(data, "success");
+
+        // clear fields
+        document.getElementById("account_id").value = "";
+        document.getElementById("amount").value = "";
+        document.getElementById("location").value = "";
+    })
+    .catch(err => {
+        showFeedback("Error sending data", "error");
+        console.log(err);
+    });
 }
 
 /* ── Load Alerts ────────────────────────────────── */
@@ -168,26 +171,4 @@ function clearTables() {
         `<tr class="empty-row"><td colspan="5">Cleared. Click "Load Transactions" to reload.</td></tr>`;
     document.getElementById("alert-count").textContent = 0;
     document.getElementById("txn-count").textContent = 0;
-}
-function addTransaction() {
-    const amount = document.getElementById("amount").value;
-    const type = document.getElementById("transaction_type").value; // 👈 HERE
-    const location = document.getElementById("location").value;
-
-    fetch("http://localhost:5000/add-transaction", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            amount,
-            type,      // 👈 THIS LINE (IMPORTANT)
-            location
-        })
-    })
-    .then(res => res.text())
-    .then(data => {
-        document.getElementById("form-feedback").innerText = data;
-    })
-    .catch(err => console.log(err));
 }
