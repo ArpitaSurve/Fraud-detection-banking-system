@@ -169,25 +169,3 @@ function clearTables() {
     document.getElementById("alert-count").textContent = 0;
     document.getElementById("txn-count").textContent = 0;
 }
-function sendTransaction() {
-    const amount = document.getElementById("amount").value;
-    const type = document.getElementById("type").value;
-    const location = document.getElementById("location").value;
-
-    fetch("http://localhost:5000/add-transaction", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            amount,
-            type,
-            location
-        })
-    })
-    .then(res => res.text())
-    .then(data => {
-        alert(data);
-    })
-    .catch(err => console.log(err));
-}
