@@ -171,7 +171,7 @@ function clearTables() {
 }
 function addTransaction() {
     const amount = document.getElementById("amount").value;
-    const type = document.getElementById("transaction_type").value;
+    const type = document.getElementById("transaction_type").value; // 👈 HERE
     const location = document.getElementById("location").value;
 
     fetch("http://localhost:5000/add-transaction", {
@@ -181,7 +181,7 @@ function addTransaction() {
         },
         body: JSON.stringify({
             amount,
-            type,
+            type,      // 👈 THIS LINE (IMPORTANT)
             location
         })
     })
