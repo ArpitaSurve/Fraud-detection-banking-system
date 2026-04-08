@@ -67,3 +67,33 @@ app.get("/transactions", (req, res) => {
 app.listen(5000, () => {
     console.log("Server running on port 5000");
 });
+// APP GET API TO FETCH ALERTS
+app.get("/alerts", (req, res) => {
+    const query = `
+        SELECT 
+            transaction_id AS alert_id,
+            amount,
+            location,
+            CASE
+                WHEN amount > 50000 THEN 'HIGH'
+                WHEN amount > 20000 THEN 'MEDIUM'
+                ELSE 'LOW'
+            END AS risk_level,
+            CASE
+                WHEN amount > 50000 THEN 'Large transaction'
+                WHEN amount > 20000 THEN 'Moderate transaction'
+                ELSE 'Normal'
+            END AS reason
+        FROM Transactions
+        ORDER BY transaction_id DESC
+    `;
+
+    db.query(query, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send("Error fetching alerts");
+        } else {
+            res.json(result);
+        }
+    });
+});
