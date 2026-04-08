@@ -72,6 +72,10 @@ function addTransaction() {
         document.getElementById("account_id").value = "";
         document.getElementById("amount").value = "";
         document.getElementById("location").value = "";
+
+        // ADDING  THESE TWO LINES (for auto refresh alerts)
+        loadTransactions();
+        loadAlerts();
     })
     .catch(err => {
         showFeedback("Error sending data", "error");
